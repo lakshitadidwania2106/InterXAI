@@ -4,7 +4,7 @@ import axios from 'axios';
 export const getAuthToken = () => {
   return localStorage.getItem("authToken");
 };
-
+const baseUrl = import.meta.env.VITE_API_URL;
 // ✅ Enhanced fetchWithToken: supports GET (default), POST, PUT, DELETE
 export const fetchWithToken = async (url, token, navigate, method = "GET", body = null) => {
   try {
@@ -37,7 +37,7 @@ export const fetchWithToken = async (url, token, navigate, method = "GET", body 
 // ✅ Token handler: login + fetch ID + redirect
 export const handleToken = async (username, password, navigate) => {
   try {
-    const res = await fetch('http://localhost:8000/api/users/login/', {
+    const res = await fetch(`${baseUrl}/users/login/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -51,7 +51,7 @@ export const handleToken = async (username, password, navigate) => {
 
     localStorage.setItem('authToken', data.token);
 
-    const idRes = await fetch('http://localhost:8000/api/users/get-id/', {
+    const idRes = await fetch(`${baseUrl}/users/get-id/`, {
       headers: { Authorization: `Token ${data.token}` },
     });
 

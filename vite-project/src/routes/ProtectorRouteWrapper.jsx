@@ -487,7 +487,7 @@
 // ProctoredRouteWrapper.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 const ProctoredRouteWrapper = ({ children }) => {
   const [isMonitoring, setIsMonitoring] = useState(false);
   const [violations, setViolations] = useState(0);
@@ -578,70 +578,7 @@ const ProctoredRouteWrapper = ({ children }) => {
     });
   };
 
-  // Initialize system
-  // useEffect(() => {
-  //   const initializeSystem = async () => {
-  //     try {
-  //       logEvent('Initializing AI proctoring system for route: ' + location.pathname, 'info');
-        
-  //       // Load face-api models (if available)
-  //       if (typeof window !== 'undefined' && window.faceapi) {
-  //         try {
-  //           await Promise.all([
-  //             window.faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
-  //             window.faceapi.nets.faceLandmark68Net.loadFromUri('/models')
-  //           ]);
-  //           setModelsLoaded(true);
-  //           logEvent('AI models loaded successfully', 'success');
-  //         } catch (modelError) {
-  //           logEvent('AI models failed to load, using basic monitoring', 'warning');
-  //           setModelsLoaded(false);
-  //         }
-  //       } else {
-  //         logEvent('face-api.js not available, using basic monitoring', 'warning');
-  //         setModelsLoaded(false);
-  //       }
 
-  //       await setupCamera();
-  //       setupFocusDetection();
-        
-  //       // Give a moment for camera to fully initialize
-  //       setTimeout(() => {
-  //         setSystemReady(true);
-  //         logEvent('Proctoring system ready', 'success');
-  //       }, 1000);
-        
-  //       // Auto-start monitoring after 5 seconds with enhanced logging
-  //       setTimeout(() => {
-  //         if (systemReady && cameraPermissionGranted) {
-  //           logEvent('Auto-starting monitoring system', 'info');
-  //           startMonitoring();
-  //         } else {
-  //           logEvent('Delaying auto-start - system not fully ready', 'warning');
-  //           // Try again after another delay
-  //           setTimeout(() => {
-  //             if (systemReady && cameraPermissionGranted) {
-  //               logEvent('Auto-starting monitoring system (delayed)', 'info');
-  //               startMonitoring();
-  //             }
-  //           }, 3000);
-  //         }
-  //       }, 5000);
-        
-  //     } catch (error) {
-  //       setError(error.message);
-  //       logEvent(`System initialization failed: ${error.message}`, 'error');
-  //     }
-  //   };
-
-  //   initializeSystem();
-    
-  //   return () => {
-  //     logEvent('Component unmounting - cleaning up monitoring', 'info');
-  //     stopMonitoring();
-  //     cleanup();
-  //   };
-  // }, [location.pathname]);
 
   useEffect(() => {
     const initializeSystem = async () => {
@@ -1208,7 +1145,8 @@ const ProctoredRouteWrapper = ({ children }) => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [isMonitoring]);
-
+  const navigate=useNavigate()
+useEffect(()=>{if(violations>10){navigate('/')}},[violations])
   // Error state
   if (error) {
     return (
@@ -1230,167 +1168,6 @@ const ProctoredRouteWrapper = ({ children }) => {
     );
   }
 
-//   return (
-//     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700">
-//       {/* Proctoring Header */}
-//       <div className="bg-black/20 backdrop-blur-lg border-b border-white/10">
-//         <div className="max-w-7xl mx-auto px-4 py-3">
-//           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-//             <div className="flex items-center space-x-4">
-//               <div className="flex items-center space-x-2">
-//                 <span className="text-2xl">🔒</span>
-//                 <div>
-//                   <h1 className="text-white font-bold text-lg">{sessionInfo.title}</h1>
-//                   <p className="text-white/70 text-sm">AI Proctored Session - ID: {sessionInfo.sessionId}</p>
-//                 </div>
-//               </div>
-//             </div>
-            
-//             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-//               {/* Status Indicators */}
-//               <div className="flex flex-wrap items-center gap-2">
-//                 {Object.entries(status).map(([key, { text, type }]) => (
-//                   <div key={key} className={`flex items-center space-x-2 px-3 py-2 rounded-full text-sm transition-all duration-300 ${
-//                     type === 'safe' ? 'bg-green-500/20 text-green-100 border border-green-400/30' :
-//                     type === 'warning' ? 'bg-yellow-500/20 text-yellow-100 border border-yellow-400/30' :
-//                     'bg-red-500/20 text-red-100 border border-red-400/30'
-//                   }`}>
-//                     <span className="text-xs">
-//                       {key === 'face' ? '👤' :
-//                        key === 'gaze' ? '👀' :
-//                        key === 'focus' ? '🖥️' : '👥'}
-//                     </span>
-//                     <span className="whitespace-nowrap">{text}</span>
-//                   </div>
-//                 ))}
-//               </div>
-
-//               {/* Stats and Controls */}
-//               <div className="flex items-center space-x-4">
-//                 {/* Stats */}
-//                 <div className="flex items-center space-x-4 text-white">
-//                   <div className="text-center">
-//                     <div className="text-xs opacity-70">Time</div>
-//                     <div className="font-mono font-bold text-sm">{monitorTime}</div>
-//                   </div>
-//                   <div className="text-center">
-//                     <div className="text-xs opacity-70">Violations</div>
-//                     <div className="font-bold text-red-300 text-sm">{violations}</div>
-//                   </div>
-//                   <div className="text-center">
-//                     <div className="text-xs opacity-70">Confidence</div>
-//                     <div className="font-bold text-blue-300 text-sm">{faceConfidence}</div>
-//                   </div>
-//                 </div>
-
-//                 {/* Controls */}
-//                 {/* <div className="flex items-center space-x-2">
-//                   {isMonitoring ? (
-//                     <button
-//                       onClick={stopMonitoring}
-//                       className="px-4 py-2 bg-red-500/80 hover:bg-red-500 rounded-lg text-white font-semibold transition-all duration-300 text-sm"
-//                     >
-//                       ⏹️ Stop
-//                     </button>
-//                   ) : (
-//                     <button
-//                       onClick={startMonitoring}
-//                       disabled={!systemReady}
-//                       className="px-4 py-2 bg-green-500/80 hover:bg-green-500 disabled:bg-gray-500/50 rounded-lg text-white font-semibold transition-all duration-300 text-sm"
-//                     >
-//                       🚀 Start
-//                     </button>
-//                   )}
-//                 </div> */}
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Debug Video - Visible for troubleshooting */}
-//       <video
-//         ref={videoRef}
-//         autoPlay
-//         muted
-//         playsInline
-//         className="fixed top-4 left-4 w-40 h-30 border-2 border-white/50 rounded-lg z-50 bg-black shadow-lg"
-//         style={{ transform: 'scaleX(-1)' }}
-//       />
-//       <canvas ref={canvasRef} className="hidden" />
-
-//       {/* Camera Status Indicator */}
-//       <div className="fixed top-4 left-48 z-50">
-//         <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-//           cameraActive && cameraPermissionGranted ? 
-//           'bg-green-500/80 text-white' : 
-//           'bg-red-500/80 text-white'
-//         }`}>
-//           {cameraActive && cameraPermissionGranted ? '📹 Camera Active' : '📹 Camera Issue'}
-//         </div>
-//       </div>
-
-//       {/* Main Content */}
-//       <div className="relative">
-//         {!systemReady && (
-//           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
-//             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 text-center">
-//               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-//               <p className="text-white text-lg">Initializing Proctoring System...</p>
-//               <p className="text-white/70 text-sm mt-2">Please allow camera access when prompted</p>
-//               {!cameraPermissionGranted && (
-//                 <p className="text-yellow-300 text-sm mt-2 font-semibold">
-//                   ⚠️ Camera permission required
-//                 </p>
-//               )}
-//             </div>
-//           </div>
-//         )}
-        
-//         {/* Render the actual route component */}
-//         <div className="min-h-screen pt-4">
-//           {children}
-//         </div>
-//       </div>
-
-//       {/* Enhanced Monitoring Indicator */}
-//       {isMonitoring && (
-//         <div className="fixed bottom-4 right-4 z-50">
-//           <div className="bg-red-500 text-white px-4 py-2 rounded-full shadow-lg flex items-center space-x-2 border border-red-400">
-//             <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
-//             <span className="font-semibold text-sm">RECORDING</span>
-//           </div>
-//         </div>
-//       )}
-
-//       {/* Mobile Status Panel */}
-//       <div className="fixed bottom-20 left-4 right-4 lg:hidden z-40">
-//         {isMonitoring && (
-//           <div className="bg-black/80 backdrop-blur-lg rounded-xl p-3 text-white text-xs">
-//             <div className="grid grid-cols-2 gap-2">
-//               {Object.entries(status).map(([key, { text, type }]) => (
-//                 <div key={key} className={`flex items-center space-x-1 ${
-//                   type === 'safe' ? 'text-green-300' :
-//                   type === 'warning' ? 'text-yellow-300' :
-//                   'text-red-300'
-//                 }`}>
-//                   <span className="text-xs">
-//                     {key === 'face' ? '👤' :
-//                      key === 'gaze' ? '👀' :
-//                      key === 'focus' ? '🖥️' : '👥'}
-//                   </span>
-//                   <span className="truncate">{text}</span>
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ProctoredRouteWrapper;
 
 return (
   <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700">

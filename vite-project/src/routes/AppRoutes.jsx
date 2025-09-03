@@ -22,11 +22,10 @@ export default function AppRoutes() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/profile/:id" element={<UserDashboard />} />
       <Route path="/profile-setup" element={<ProfileSetup />} />
-      <Route path="/profilesetup" element={<ProfileSetup />} />
       <Route path="/register-org" element={<OrgSignup />} />
       <Route path="/org-dashboard/:id" element={<OrgDashboard />} />
-      <Route path="/interviews" element={<Interview />} />
       <Route path="/interview/:id" element={<Interview />} />
+      <Route path="/interview" element={<Interview />} />
       <Route path="/applications/:id" element={<Application />} />
       <Route path="/leaderboard/:id" element={<Leaderboard />} />
   <Route 
